@@ -1,0 +1,125 @@
+{% extends "users/user_base.html" %}
+{% block title %}Main Switch{% endblock %}
+{% block page_title %}Main Switch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="bi bi-toggles" style="color:var(--gold);margin-right:8px"></i>Main Switch</h1>
+    <p>Master control for all rooms in your home</p>
+</div>
+
+<!-- Master Power -->
+<div class="master-switch-card">
+    {% set any_on = rooms.values()|select|list|length > 0 %}
+    <div class="master-btn {% if any_on %}on{% endif %}" id="masterBtn" onclick="toggleMaster()">
+        <i class="bi bi-power"></i>
+    </div>
+    <div class="master-title">Home Power Control</div>
+    <p style="color:rgba(255,255,255,0.5);font-size:0.875rem;margin-bottom:20px">
+        {{ rooms.values()|select|list|length }} of {{ rooms|length }} rooms active
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center">
+        <button onclick="allRooms(true)" class="btn" style="background:rgba(39,174,96,0.18);color:#2ecc71;border:1px solid rgba(39,174,96,0.3)">
+            <i class="bi bi-power"></i> Turn All ON
+        </button>
+        <button onclick="allRooms(false)" class="btn" style="background:rgba(192,57,43,0.18);color:#e74c3c;border:1px solid rgba(192,57,43,0.3)">
+            <i class="bi bi-power"></i> Turn All OFF
+        </button>
+    </div>
+</div>
+
+<!-- Room Cards -->
+{% set room_icons = {
+    'Main Room':  'bi-tv',
+    'Bedroom 1':  'bi-moon-stars',
+    'Bedroom 2':  'bi-moon-stars',
+    'Bedroom 3':  'bi-moon-stars',
+    'Kitchen':    'bi-cup-hot'
+} %}
+{% set room_links = {
+    'Main Room':  'user.main_room',
+    'Bedroom 1':  'user.bedroom_1',
+    'Bedroom 2':  'user.bedroom_2',
+    'Bedroom 3':  'user.bedroom_3',
+    'Kitchen':    'user.kitchen'
+} %}
+
+<div class="rooms-grid">
+    {% for room_name, is_on in rooms.items() %}
+    <div class="room-card" id="room_{{ loop.index }}" style="cursor:default;{% if is_on %}border-color:rgba(39,174,96,0.35);background:rgba(39,174,96,0.05);{% endif %}">
+        <div class="room-card-header">
+            <div class="room-icon">
+                <i class="{{ room_icons.get(room_name, 'bi-house') }}"></i>
+            </div>
+            <div style="flex:1">
+                <div class="room-name">{{ room_name }}</div>
+                <span class="badge {% if is_on %}badge-on{% else %}badge-off{% endif %}" id="badge_{{ loop.index }}">
+                    {{ 'ON' if is_on else 'OFF' }}
+                </span>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" 
+                       {% if is_on %}checked{% endif %}
+                       onchange="toggleRoomSwitch(this, '{{ room_name }}', {{ loop.index }})">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="room-card-footer">
+            <a href="{{ url_for(room_links.get(room_name, 'user.dashboard')) }}" 
+               class="btn btn-sm btn-secondary">
+                <i class="bi bi-sliders"></i> Manage Room
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function toggleRoomSwitch(el, room, idx) {
+    const state = el.checked;
+    const card  = document.getElementById('room_' + idx);
+    const badge = document.getElementById('badge_' + idx);
+
+    if (state) { card.style.borderColor='rgba(39,174,96,0.35)'; card.style.background='rgba(39,174,96,0.05)'; }
+    else        { card.style.borderColor=''; card.style.background=''; }
+    if (badge) { badge.textContent = state?'ON':'OFF'; badge.className = 'badge ' + (state?'badge-on':'badge-off'); }
+
+    fetch('/user/api/toggle-room', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({room: room, state: state})
+    })
+    .then(r => r.json())
+    .then(d => showToast(`${room}: ${state?'ON':'OFF'}`, state?'success':'info'));
+}
+
+function allRooms(state) {
+    fetch('/user/api/toggle-all', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({state: state})
+    })
+    .then(r => r.json())
+    .then(d => {
+        document.querySelectorAll('[type=checkbox]').forEach(el => el.checked = state);
+        document.querySelectorAll('[id^="room_"]').forEach(c => {
+            c.style.borderColor = state ? 'rgba(39,174,96,0.35)' : '';
+            c.style.background  = state ? 'rgba(39,174,96,0.05)' : '';
+        });
+        document.querySelectorAll('[id^="badge_"]').forEach(b => {
+            b.textContent = state ? 'ON' : 'OFF';
+            b.className = 'badge ' + (state ? 'badge-on' : 'badge-off');
+        });
+        const btn = document.getElementById('masterBtn');
+        if (btn) { state ? btn.classList.add('on') : btn.classList.remove('on'); }
+        showToast(`All rooms ${state?'turned ON':'turned OFF'}`, state?'success':'info');
+    });
+}
+
+function toggleMaster() {
+    const btn = document.getElementById('masterBtn');
+    const currentlyOn = btn.classList.contains('on');
+    allRooms(!currentlyOn);
+}
+</script>
+{% endblock %}

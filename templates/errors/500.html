@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}500 — Server Error{% endblock %}
+{% block content %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;text-align:center">
+    <div>
+        <div style="font-family:'Playfair Display',serif;font-size:8rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#c0392b,#e74c3c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">500</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin:16px 0 8px;color:#fff">Server Error</h2>
+        <p style="color:rgba(255,255,255,0.5);margin-bottom:32px">Something went wrong on our end. Please try again later.</p>
+        <div style="display:flex;gap:12px;justify-content:center">
+            <a href="/" class="btn btn-primary" style="width:auto;padding:12px 28px"><i class="bi bi-house"></i> Go Home</a>
+            <button onclick="location.reload()" class="btn btn-secondary" style="padding:12px 28px"><i class="bi bi-arrow-clockwise"></i> Retry</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

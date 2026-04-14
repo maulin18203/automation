@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+
+<div class="auth-page" style="padding-top:120px;padding-bottom:60px">
+    <div class="glass-card auth-card" style="max-width:560px;padding:48px">
+        <div class="auth-logo">
+            <img src="{{ url_for('static', filename='images/pr1.png') }}" alt="Logo">
+            <h1>Create Account</h1>
+            <p>Join BrightHaven and control your smart home</p>
+        </div>
+
+        {% for cat, msg in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ cat }}" data-auto-dismiss>{{ msg }}</div>
+        {% endfor %}
+
+        <form method="POST" action="{{ url_for('home.signup') }}" id="signupForm">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="full_name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="johndoe" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" id="pw" class="form-control" placeholder="Min 8 chars" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" name="confirm_password" id="cpw" class="form-control" placeholder="Repeat password" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:8px">
+                <i class="bi bi-person-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="auth-links">
+            Already have an account? <a href="{{ url_for('home.login') }}">Sign in</a>
+        </div>
+    </div>
+</div>
+
+<style>body { overflow: auto; }</style>
+<script>
+document.getElementById('signupForm').addEventListener('submit', function(e) {
+    const pw = document.getElementById('pw').value;
+    const cpw = document.getElementById('cpw').value;
+    if (pw !== cpw) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "users/user_base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block page_title %}Search{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="bi bi-search" style="color:var(--gold);margin-right:8px"></i>Search Results</h1>
+    <p>Results for: "<strong>{{ query }}</strong>"</p>
+</div>
+<div class="section-card">
+    <div class="section-card-header">
+        <h2>{{ results|length }} device(s) found</h2>
+    </div>
+    <div class="section-card-body">
+        {% if results %}
+        <div class="devices-grid">
+            {% for dev in results %}
+            <div class="device-card {% if dev.state %}device-on{% endif %}">
+                <div class="device-icon"><i class="{{ dev.icon }}" style="font-size:1.8rem"></i></div>
+                <div class="device-name">{{ dev.name }}</div>
+                <div class="device-room">{{ dev.room }}</div>
+                <span class="device-status">{{ 'ON' if dev.state else 'OFF' }}</span>
+                <div class="toggle-wrap">
+                    <span class="toggle-label">Toggle</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" data-device="{{ dev.id }}"
+                               {% if dev.state %}checked{% endif %}
+                               onchange="onDeviceToggle(this, '{{ dev.id }}', '{{ dev.name }}')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:60px;color:rgba(255,255,255,0.3)">
+            <i class="bi bi-search" style="font-size:3rem;display:block;margin-bottom:16px"></i>
+            <p>No devices found matching "{{ query }}"</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+function onDeviceToggle(el, devId, devName) {
+    const state = el.checked;
+    fetch('/user/api/toggle', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({device:devId, state:state})
+    }).then(r=>r.json()).then(d=>showToast(devName+' '+(state?'ON':'OFF'),state?'success':'info'));
+}
+</script>
+{% endblock %}

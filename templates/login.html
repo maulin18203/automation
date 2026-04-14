@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<!-- Logo Loader -->
+<div id="logo-loader">
+    <img src="{{ url_for('static', filename='images/pr1.png') }}" alt="BrightHaven">
+    <div class="loader-text">BRIGHTHAVEN</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<div class="auth-page">
+    <div class="glass-card auth-card">
+        <div class="auth-logo">
+            <img src="{{ url_for('static', filename='images/pr1.png') }}" alt="Logo">
+            <h1>BrightHaven</h1>
+            <p>Smart Home Automation System</p>
+        </div>
+
+        {% for cat, msg in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ cat }}" data-auto-dismiss>
+            <i class="bi bi-{% if cat=='success' %}check-circle{% elif cat=='danger' %}x-circle{% else %}info-circle{% endif %}"></i>
+            {{ msg }}
+        </div>
+        {% endfor %}
+
+        <h2>Welcome back</h2>
+        <p class="subtitle">Sign in to control your smart home</p>
+
+        <form method="POST" action="{{ url_for('home.login') }}">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:8px">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </button>
+        </form>
+
+        <div class="auth-divider">or</div>
+
+        <div class="auth-links">
+            <a href="{{ url_for('home.forgot_password') }}">Forgot your password?</a>
+            <br><br>
+            Don't have an account? <a href="{{ url_for('home.signup') }}">Create one</a>
+        </div>
+
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:120px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+                <i class="bi bi-lightbulb" style="color:var(--gold);font-size:1.2rem"></i>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:4px">Smart Lighting</div>
+            </div>
+            <div style="flex:1;min-width:120px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+                <i class="bi bi-shield-check" style="color:var(--teal-light);font-size:1.2rem"></i>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:4px">Security</div>
+            </div>
+            <div style="flex:1;min-width:120px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+                <i class="bi bi-phone" style="color:var(--gold);font-size:1.2rem"></i>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:4px">Remote Access</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+body { overflow: auto; }
+.bh-footer { display: none; }
+</style>
+{% endblock %}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BrightHaven{% endblock %} — Smart Home</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/pr1.png') }}" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="bh-navbar">
+    <a href="{{ url_for('home.login') }}" class="brand">
+        <img src="{{ url_for('static', filename='images/pr1.png') }}" alt="BrightHaven">
+        <span>BrightHaven</span>
+    </a>
+    <div class="nav-links">
+        <a href="{{ url_for('home.login') }}" class="nav-link {% if request.endpoint == 'home.login' %}active{% endif %}">Login</a>
+        <a href="{{ url_for('home.contact_us') }}" class="nav-link {% if request.endpoint == 'home.contact_us' %}active{% endif %}">Contact</a>
+        <a href="{{ url_for('home.signup') }}" class="btn-login">Get Started</a>
+    </div>
+</nav>
+
+<!-- Ambient particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Main -->
+{% block content %}{% endblock %}
+
+<!-- Footer -->
+<footer class="bh-footer">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px">
+        <div>
+            <div class="footer-brand">BrightHaven</div>
+            <p>Smart home automation that puts you in control — from anywhere in the world.</p>
+            <div class="social-links">
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-twitter-x"></i></a>
+                <a href="#"><i class="bi bi-instagram"></i></a>
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+            </div>
+        </div>
+        <div>
+            <p style="color:rgba(255,255,255,0.7);font-weight:600;margin-bottom:12px;font-size:.875rem;text-transform:uppercase;letter-spacing:.08em">Contact</p>
+            <p>Email: <a href="mailto:support@brighthaven.com">support@brighthaven.com</a></p>
+            <p style="margin-top:6px">Phone: <a href="tel:+919909618203">+91 9909618203</a></p>
+        </div>
+        <div>
+            <p style="color:rgba(255,255,255,0.7);font-weight:600;margin-bottom:12px;font-size:.875rem;text-transform:uppercase;letter-spacing:.08em">Quick Links</p>
+            <p><a href="{{ url_for('home.login') }}">Login</a></p>
+            <p style="margin-top:6px"><a href="{{ url_for('home.signup') }}">Sign Up</a></p>
+            <p style="margin-top:6px"><a href="{{ url_for('home.contact_us') }}">Contact Us</a></p>
+        </div>
+        <div style="text-align:right">
+            <p style="color:rgba(255,255,255,0.35);font-size:.8rem">&copy; 2026 BrightHaven.<br>All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+    // Generate particles
+    const container = document.getElementById('particles');
+    if (container) {
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.cssText = `
+                left: ${Math.random()*100}%;
+                animation-duration: ${8 + Math.random()*12}s;
+                animation-delay: ${Math.random()*10}s;
+                width: ${2 + Math.random()*3}px;
+                height: ${2 + Math.random()*3}px;
+                opacity: ${0.2 + Math.random()*0.4};
+            `;
+            container.appendChild(p);
+        }
+    }
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

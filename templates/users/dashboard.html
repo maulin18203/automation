@@ -1,0 +1,129 @@
+{% extends "users/user_base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h1>Welcome, {{ user.name or user.username }} 👋</h1>
+    <p>Here's your smart home overview for today</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon gold"><i class="bi bi-lightning-charge"></i></div>
+        <div class="stat-info">
+            <div class="value">{{ on_count }}</div>
+            <div class="label">Devices On</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon teal"><i class="bi bi-hdd-network"></i></div>
+        <div class="stat-info">
+            <div class="value">{{ total }}</div>
+            <div class="label">Total Devices</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-house-check"></i></div>
+        <div class="stat-info">
+            <div class="value">{{ rooms|length }}</div>
+            <div class="label">Rooms</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon {% if on_count > 0 %}gold{% else %}teal{% endif %}">
+            <i class="bi bi-{% if on_count > 0 %}power{% else %}moon{% endif %}"></i>
+        </div>
+        <div class="stat-info">
+            <div class="value">{{ 'Active' if on_count > 0 else 'Idle' }}</div>
+            <div class="label">Home Status</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Controls -->
+<div class="section-card" style="margin-bottom:24px">
+    <div class="section-card-header">
+        <h2><i class="bi bi-toggles" style="color:var(--gold);margin-right:8px"></i>Quick Controls</h2>
+        <div style="display:flex;gap:10px">
+            <button onclick="masterToggle(true)" class="btn btn-sm" style="background:rgba(39,174,96,0.2);color:#2ecc71;border:1px solid rgba(39,174,96,0.3)">
+                <i class="bi bi-power"></i> All ON
+            </button>
+            <button onclick="masterToggle(false)" class="btn btn-sm" style="background:rgba(192,57,43,0.2);color:#e74c3c;border:1px solid rgba(192,57,43,0.3)">
+                <i class="bi bi-power"></i> All OFF
+            </button>
+        </div>
+    </div>
+    <div class="section-card-body">
+        <p style="color:rgba(255,255,255,0.45);font-size:0.875rem">Control all devices in your home simultaneously. Use the room cards below for individual room control.</p>
+    </div>
+</div>
+
+<!-- Room Cards -->
+<div class="page-header" style="margin-bottom:16px">
+    <h1 style="font-size:1.2rem">Rooms</h1>
+</div>
+<div class="rooms-grid">
+    {% set room_data = [
+        ('Main Room',  'bi-tv',         url_for('user.main_room'),  'bi-arrow-right'),
+        ('Bedroom 1',  'bi-moon-stars', url_for('user.bedroom_1'),  'bi-arrow-right'),
+        ('Bedroom 2',  'bi-moon-stars', url_for('user.bedroom_2'),  'bi-arrow-right'),
+        ('Bedroom 3',  'bi-moon-stars', url_for('user.bedroom_3'),  'bi-arrow-right'),
+        ('Kitchen',    'bi-cup-hot',    url_for('user.kitchen'),     'bi-arrow-right'),
+    ] %}
+    {% for room_name, icon, link, arrow in room_data %}
+    <a href="{{ link }}" class="room-card">
+        <div class="room-card-header">
+            <div class="room-icon"><i class="{{ icon }}"></i></div>
+            <div>
+                <div class="room-name">{{ room_name }}</div>
+                <div class="room-count">Tap to manage devices</div>
+            </div>
+        </div>
+        <div class="room-card-footer">
+            <div style="display:flex;gap:6px">
+                <span class="room-device-tag">Light</span>
+                <span class="room-device-tag">Fan</span>
+                <span class="room-device-tag">AC</span>
+            </div>
+            <div class="room-go-btn">
+                Manage <i class="bi bi-arrow-right"></i>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+
+    <!-- Main Switch Card -->
+    <a href="{{ url_for('user.main_switch') }}" class="room-card" style="border-color:rgba(212,175,55,0.25);background:rgba(212,175,55,0.04)">
+        <div class="room-card-header">
+            <div class="room-icon" style="background:linear-gradient(135deg,rgba(212,175,55,0.3),rgba(65,108,111,0.2))"><i class="bi bi-toggles" style="color:var(--gold)"></i></div>
+            <div>
+                <div class="room-name">Main Switch</div>
+                <div class="room-count">Master room control</div>
+            </div>
+        </div>
+        <div class="room-card-footer">
+            <div style="display:flex;gap:6px">
+                <span class="room-device-tag">All Rooms</span>
+            </div>
+            <div class="room-go-btn" style="color:var(--gold)">Control All <i class="bi bi-arrow-right"></i></div>
+        </div>
+    </a>
+</div>
+
+<script>
+function masterToggle(state) {
+    const label = state ? 'ON' : 'OFF';
+    if (!confirm(`Turn ALL devices ${label}?`)) return;
+    fetch('/user/api/toggle-all', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({state: state})
+    })
+    .then(r => r.json())
+    .then(d => showToast(`All devices turned ${label}`, state ? 'success' : 'info'));
+}
+</script>
+{% endblock %}

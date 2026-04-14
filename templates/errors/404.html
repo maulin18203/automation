@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}404 — Page Not Found{% endblock %}
+{% block content %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;text-align:center">
+    <div>
+        <div style="font-family:'Playfair Display',serif;font-size:8rem;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--teal-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">404</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin:16px 0 8px;color:#fff">Page Not Found</h2>
+        <p style="color:rgba(255,255,255,0.5);margin-bottom:32px">The page you're looking for doesn't exist or has been moved.</p>
+        <div style="display:flex;gap:12px;justify-content:center">
+            <a href="/" class="btn btn-primary" style="width:auto;padding:12px 28px"><i class="bi bi-house"></i> Go Home</a>
+            <button onclick="history.back()" class="btn btn-secondary" style="padding:12px 28px"><i class="bi bi-arrow-left"></i> Go Back</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
